@@ -6,6 +6,14 @@ let uid = String(Math.floor(Math.random() * 10000));
 let client;
 let channel;
 
+let queryString = window.location.search;
+let urlParams = new URLSearchParams(queryString);
+let roomId = urlParams.get("room");
+
+if (!roomId) {
+  window.location = "lobby.html";
+}
+
 let localStream;
 let remoteStream;
 let peerConeection;
@@ -23,27 +31,28 @@ let init = async () => {
   await client.login({ uid, token });
 
   // index.html?room=1234
-  channel = client.createChannel("main");
+  channel = client.createChannel(roomId);
 
   // join channel
   await channel.join();
   channel.on("MemberJoined", handleUserJoined);
-  channel.on("MemberLeft", handleUserLeft) ;
+  channel.on("MemberLeft", handleUserLeft);
 
   client.on("MessageFromPeer", handleMessageFromPeer);
 
   // request media permission
   localStream = await navigator.mediaDevices.getUserMedia({
     video: true,
-    audio: false,
+    audio: true,
   });
 
   document.getElementById("user-1").srcObject = localStream;
 };
 
 let handleUserLeft = (MemberId) => {
-    document.getElementById('user-2').style.display = 'none';
-}
+  document.getElementById("user-2").style.display = "none";
+  document.getElementById("user-1").classList.remove('smallFrame');
+};
 
 let handleUserJoined = async (MemberId) => {
   console.log("A new user has join", MemberId);
@@ -73,12 +82,13 @@ let createPeerConnection = async (MemberId) => {
 
   remoteStream = new MediaStream();
   document.getElementById("user-2").srcObject = remoteStream;
-  document.getElementById("user-2").style.display = 'block';
+  document.getElementById("user-2").style.display = "block";
+  document.getElementById("user-1").classList.add('smallFrame');
 
   if (!localStream) {
     localStream = await navigator.mediaDevices.getUserMedia({
       video: true,
-      audio: false,
+      audio: true,
     });
 
     document.getElementById("user-1").srcObject = localStream;
@@ -153,9 +163,34 @@ let addAnswer = async (answer) => {
 };
 
 let leaveChannel = async () => {
-    await channel.leave() ; 
-    await client.logout() ; 
-}
-window.addEventListener('beforeunload', leaveChannel) ;
+  await channel.leave();
+  await client.logout();
+};
 
+let toggleCamera = async () => {
+  let videoTrack = localStream.getTracks().find(track => track.kind === 'video');
+
+  if (videoTrack.enabled) {
+    videoTrack.enabled = false ;
+    document.getElementById('camera-btn').style.backgroundColor = 'rgb(255,80,80)';
+  } else {
+    videoTrack.enabled = true ; 
+    document.getElementById('camera-btn').style.backgroundColor = 'rgb(179, 102, 249,.9)';
+  }
+}
+
+let toggleMic = async () => {
+  let audioTrack = localStream.getTracks().find(track => track.kind === 'audio');
+
+  if (audioTrack.enabled) {
+    audioTrack.enabled = false ;
+    document.getElementById('mic-btn').style.backgroundColor = 'rgb(255,80,80)';
+  } else {
+    audioTrack.enabled = true ; 
+    document.getElementById('mic-btn').style.backgroundColor = 'rgb(179, 102, 249,.9)';
+  }
+}
+window.addEventListener("beforeunload", leaveChannel);
+document.getElementById('camera-btn').addEventListener('click', toggleCamera);
+document.getElementById('mic-btn').addEventListener('click', toggleMic);
 init();

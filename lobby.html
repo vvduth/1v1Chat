@@ -16,7 +16,11 @@
 <script>
     let form = document.getElementById('join-form')
 
-    form.addEventListener('subm')
+    form.addEventListener('submit', (e)=> {
+        e.preventDefault()  ;
+        let inviteCode = e.target.invite_link.value ;
+        window.location = `index.html?room=${inviteCode}`
+    })
 </script>
 
 </html>
