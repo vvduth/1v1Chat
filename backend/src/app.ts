@@ -33,7 +33,7 @@ io.on('connection', (socket: Socket) => {
         socket.broadcast.emit("Call ended because one user lelf")
     })
 
-    socket.on("calluser", ({userToCall, signalData,from , name })=> {
+    socket.on("callUser", ({userToCall, signalData,from , name })=> {
         io.to(userToCall).emit("callUser", {signal: signalData, from , name})
     })
 

@@ -1,55 +1,50 @@
-import React from "react";
-import logo from "./logo.svg";
-import { Typography, AppBar } from "@mui/material";
-import {makeStyles } from 'tss-react/mui'
-import VideoPlayer from "./components/VideoPlayer";
-import Options from "./components/Options";
-import Notification from "./components/Notification";
-import "./App.css";
+import React from 'react';
+import { Typography, AppBar } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles()((theme:any)=> {
-  return {
-    appBar: {
-      borderRadius: 15,
-      margin: '30px 100px',
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      width: '600px',
-      border: '2px solid black',
-  
-      [theme.breakpoints.down('xs')]: {
-        width: '90%',
-      },
-    },
-    image: {
-      marginLeft: '15px',
-    },
-    wrapper: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      width: '100%',
-    },
-  }
-})
+import VideoPlayer from './components/VideoPlayer';
 
-function App() {
+import Notification from './components/Notification';
 
-  const classes = useStyles(); 
+const useStyles = makeStyles((theme) => ({
+  appBar: {
+    borderRadius: 15,
+    margin: '30px 100px',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '600px',
+    border: '2px solid black',
+
+    [theme.breakpoints.down('xs')]: {
+      width: '90%',
+    },
+  },
+  image: {
+    marginLeft: '15px',
+  },
+  wrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: '100%',
+  },
+}));
+
+const App = () => {
+  const classes = useStyles();
+
   return (
-    <div className={classes.classes.wrapper}>
-      <AppBar className= {classes.classes.appBar}>
-        <Typography variant="h2" align="center">
-          Video Chat App
-        </Typography>
+    <div className={classes.wrapper}>
+      <AppBar className={classes.appBar} position="static" color="inherit">
+        <Typography variant="h2" align="center">Video Chat</Typography>
       </AppBar>
       <VideoPlayer />
-      <Options></Options>
-      <Notification />
+   
+        <Notification/>
     </div>
   );
-}
+};
 
 export default App;
